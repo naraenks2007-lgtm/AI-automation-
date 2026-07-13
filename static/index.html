@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Local AI Automation Agent Dashboard</title>
+    <!-- Modern Premium Typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Source+Code+Pro:wght@400;500;600&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-main: #060913;
+            --bg-card: rgba(15, 22, 42, 0.6);
+            --border-glow: rgba(99, 102, 241, 0.15);
+            --accent-purple: #6366f1;
+            --accent-cyan: #06b6d4;
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --text-success: #10b981;
+            --text-error: #f43f5e;
+            --text-warning: #f59e0b;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: radial-gradient(circle at 50% 0%, #0d1527 0%, var(--bg-main) 70%);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+
+        /* Scrollbar styles */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(2, 4, 10, 0.5);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(99, 102, 241, 0.3);
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(99, 102, 241, 0.5);
+        }
+
+        header {
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(8px);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-dot {
+            width: 12px;
+            height: 12px;
+            background-color: var(--accent-cyan);
+            border-radius: 50%;
+            box-shadow: 0 0 10px var(--accent-cyan);
+            animation: pulse-glow 2s infinite;
+        }
+
+        @keyframes pulse-glow {
+            0% { transform: scale(0.95); box-shadow: 0 0 5px var(--accent-cyan); }
+            50% { transform: scale(1.1); box-shadow: 0 0 15px var(--accent-cyan); }
+            100% { transform: scale(0.95); box-shadow: 0 0 5px var(--accent-cyan); }
+        }
+
+        .logo-dot.running {
+            background-color: var(--text-success);
+            box-shadow: 0 0 10px var(--text-success);
+            animation: pulse-glow-success 1.5s infinite;
+        }
+
+        @keyframes pulse-glow-success {
+            0% { transform: scale(0.95); box-shadow: 0 0 5px var(--text-success); }
+            50% { transform: scale(1.1); box-shadow: 0 0 15px var(--text-success); }
+            100% { transform: scale(0.95); box-shadow: 0 0 5px var(--text-success); }
+        }
+
+        h1 {
+            font-size: 22px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            background: linear-gradient(to right, #fff, var(--text-secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .status-badge {
+            font-size: 13px;
+            padding: 4px 12px;
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            font-weight: 500;
+        }
+
+        main {
+            flex: 1;
+            padding: 30px 40px;
+            max-width: 1600px;
+            width: 100%;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+
+        /* Control Panel Card */
+        .control-panel {
+            background: var(--bg-card);
+            border: 1px solid var(--border-glow);
+            border-radius: 16px;
+            padding: 24px;
+            backdrop-filter: blur(12px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .task-input {
+            flex: 1;
+            min-width: 300px;
+            background: rgba(2, 4, 10, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 14px 20px;
+            color: var(--text-primary);
+            font-family: inherit;
+            font-size: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .task-input:focus {
+            outline: none;
+            border-color: var(--accent-purple);
+            box-shadow: 0 0 10px rgba(99, 102, 241, 0.2);
+        }
+
+        .model-select {
+            background: rgba(2, 4, 10, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 14px 20px;
+            color: var(--text-primary);
+            font-family: inherit;
+            font-size: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .model-select:focus {
+            outline: none;
+            border-color: var(--accent-purple);
+        }
+
+        button {
+            font-family: inherit;
+            font-weight: 600;
+            font-size: 15px;
+            padding: 14px 28px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border: none;
+        }
+
+        .btn-run {
+            background: linear-gradient(135deg, var(--accent-purple) 0%, #4f46e5 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+        }
+
+        .btn-run:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(99, 102, 241, 0.5);
+        }
+
+        .btn-stop {
+            background: transparent;
+            color: var(--text-error);
+            border: 1px solid rgba(244, 63, 94, 0.3);
+        }
+
+        .btn-stop:hover {
+            background: rgba(244, 63, 94, 0.1);
+        }
+
+        /* Dual Columns Layout */
+        .workspace-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+            flex: 1;
+            min-height: 500px;
+        }
+
+        @media (max-width: 1024px) {
+            .workspace-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .panel-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-glow);
+            border-radius: 16px;
+            backdrop-filter: blur(12px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            height: 100%;
+        }
+
+        .panel-header {
+            padding: 16px 24px;
+            background: rgba(255, 255, 255, 0.02);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .panel-title {
+            font-size: 15px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-secondary);
+        }
+
+        /* Console Terminal Output */
+        .console-body {
+            flex: 1;
+            background: rgba(2, 4, 10, 0.85);
+            font-family: 'Source Code Pro', monospace;
+            font-size: 14px;
+            padding: 24px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            max-height: 600px;
+        }
+
+        .console-step-card {
+            border-left: 3px solid var(--accent-purple);
+            background: rgba(255, 255, 255, 0.02);
+            padding: 12px 16px;
+            border-radius: 0 8px 8px 0;
+            animation: fadeIn 0.4s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .console-step-header {
+            color: var(--accent-cyan);
+            font-weight: 600;
+            margin-bottom: 6px;
+            font-size: 13px;
+        }
+
+        .console-thoughts {
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+            line-height: 1.5;
+            font-style: italic;
+        }
+
+        .console-action {
+            color: var(--text-primary);
+            font-weight: 500;
+            margin-bottom: 6px;
+            display: flex;
+            gap: 8px;
+        }
+
+        .console-action-label {
+            color: var(--text-warning);
+        }
+
+        .console-result {
+            padding: 8px 12px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 4px;
+            border: 1px solid rgba(255, 255, 255, 0.03);
+            white-space: pre-wrap;
+            line-height: 1.4;
+            color: var(--text-primary);
+        }
+
+        .console-result.error {
+            border-color: rgba(244, 63, 94, 0.3);
+            color: var(--text-error);
+        }
+
+        .console-result.success {
+            border-color: rgba(16, 185, 129, 0.3);
+            color: var(--text-success);
+        }
+
+        .console-body .welcome-message {
+            color: var(--text-secondary);
+            text-align: center;
+            margin-top: auto;
+            margin-bottom: auto;
+            font-family: 'Outfit', sans-serif;
+            font-size: 15px;
+        }
+
+        /* Screenshot Live Viewer */
+        .screenshot-body {
+            flex: 1;
+            background: #020408;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            padding: 10px;
+            min-height: 400px;
+        }
+
+        .screenshot-img {
+            max-width: 100%;
+            max-height: 550px;
+            border-radius: 8px;
+            object-fit: contain;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+            transition: all 0.3s ease;
+        }
+
+        .screenshot-placeholder {
+            color: var(--text-secondary);
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .screenshot-placeholder svg {
+            width: 48px;
+            height: 48px;
+            stroke: var(--text-secondary);
+            stroke-width: 1.5;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo-section">
+            <div id="status-dot" class="logo-dot"></div>
+            <h1>AI Automation Agent</h1>
+        </div>
+        <div id="status-text" class="status-badge">Status: Idle</div>
+    </header>
+
+    <main>
+        <!-- Task Control Panel -->
+        <section class="control-panel">
+            <div class="input-group">
+                <input type="text" id="task-input" class="task-input" placeholder="Type a task (e.g. Open notepad, write text, save the file as doc.txt or open browser and search for something)">
+                <select id="model-select" class="model-select">
+                    <option value="qwen2.5:7b">Qwen 2.5 7B (Default)</option>
+                    <option value="llama3:latest">Llama 3 8B</option>
+                </select>
+                <button id="btn-run" class="btn-run" onclick="startAgent()">Run Task</button>
+                <button id="btn-stop" class="btn-stop" onclick="stopAgent()" disabled>Stop</button>
+            </div>
+        </section>
+
+        <!-- Dynamic Output Workspace -->
+        <section class="workspace-grid">
+            <!-- Console Logging Output -->
+            <div class="panel-card">
+                <div class="panel-header">
+                    <div class="panel-title">Console Output</div>
+                </div>
+                <div id="console-output" class="console-body">
+                    <div class="welcome-message">
+                        Enter a task and run the agent to see live logs and step-by-step thoughts.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Screenshot Live Viewer -->
+            <div class="panel-card">
+                <div class="panel-header">
+                    <div class="panel-title">Live Screen Viewer</div>
+                </div>
+                <div id="screenshot-viewer" class="screenshot-body">
+                    <div class="screenshot-placeholder">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                            <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                            <polyline points="21 15 16 10 5 21"></polyline>
+                        </svg>
+                        <div>No active screen grab available.</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        let eventSource = null;
+
+        function updateStatus(status, text) {
+            const statusDot = document.getElementById('status-dot');
+            const statusText = document.getElementById('status-text');
+            const btnRun = document.getElementById('btn-run');
+            const btnStop = document.getElementById('btn-stop');
+
+            statusText.innerText = `Status: ${text}`;
+            
+            if (status === 'running') {
+                statusDot.className = 'logo-dot running';
+                btnRun.disabled = true;
+                btnStop.disabled = false;
+            } else {
+                statusDot.className = 'logo-dot';
+                btnRun.disabled = false;
+                btnStop.disabled = true;
+            }
+        }
+
+        function loadInitialState() {
+            // Load history
+            fetch('/api/history')
+                .then(res => res.json())
+                .then(data => {
+                    if (data.running) {
+                        updateStatus('running', 'Running');
+                        setupEventSource();
+                    } else {
+                        updateStatus('idle', 'Idle');
+                    }
+                    
+                    if (data.history && data.history.length > 0) {
+                        const consoleDiv = document.getElementById('console-output');
+                        consoleDiv.innerHTML = ''; // clear welcome
+                        
+                        data.history.forEach(step => {
+                            appendConsoleStep(step);
+                        });
+                        updateScreenshot();
+                    }
+                })
+                .catch(err => console.error("Error loading state:", err));
+        }
+
+        function setupEventSource() {
+            if (eventSource) {
+                eventSource.close();
+            }
+
+            eventSource = new EventSource('/api/stream');
+
+            eventSource.onmessage = function(event) {
+                const data = JSON.parse(event.data);
+                console.log("SSE Message:", data);
+
+                if (data.type === 'status') {
+                    if (data.status === 'started') {
+                        updateStatus('running', 'Running');
+                        const consoleDiv = document.getElementById('console-output');
+                        consoleDiv.innerHTML = `<div style="color: var(--accent-cyan);">[SYSTEM] Started agent task: "${data.task}" using ${data.model}</div>`;
+                    } else if (data.status === 'completed') {
+                        updateStatus('completed', 'Completed');
+                        eventSource.close();
+                        eventSource = null;
+                    }
+                } else if (data.step) {
+                    appendConsoleStep(data);
+                    updateScreenshot();
+                }
+            };
+
+            eventSource.onerror = function() {
+                console.error("SSE stream failed. Reconnecting...");
+            };
+        }
+
+        function startAgent() {
+            const taskInput = document.getElementById('task-input');
+            const modelSelect = document.getElementById('model-select');
+            
+            const task = taskInput.value.trim();
+            if (!task) {
+                alert("Please enter a task before running the agent.");
+                return;
+            }
+
+            updateStatus('running', 'Starting...');
+
+            fetch('/api/run', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    task: task,
+                    model: modelSelect.value
+                })
+            })
+            .then(res => {
+                if (!res.ok) {
+                    throw new Error("Failed to start agent.");
+                }
+                return res.json();
+            })
+            .then(data => {
+                console.log("Agent started:", data);
+                setupEventSource();
+            })
+            .catch(err => {
+                console.error(err);
+                updateStatus('idle', 'Idle');
+                alert("Error starting agent. Make sure Ollama and backend server are running.");
+            });
+        }
+
+        function stopAgent() {
+            updateStatus('running', 'Stopping...');
+            fetch('/api/stop', { method: 'POST' })
+                .then(res => res.json())
+                .then(data => {
+                    console.log("Agent stopped request:", data);
+                })
+                .catch(err => console.error("Error stopping:", err));
+        }
+
+        function appendConsoleStep(step) {
+            const consoleDiv = document.getElementById('console-output');
+            
+            // Remove welcome if exists
+            const welcome = consoleDiv.querySelector('.welcome-message');
+            if (welcome) {
+                consoleDiv.removeChild(welcome);
+            }
+
+            const stepCard = document.createElement('div');
+            stepCard.className = 'console-step-card';
+            
+            let resultClass = 'console-result';
+            if (step.result.toLowerCase().includes('failed') || step.result.toLowerCase().includes('error')) {
+                resultClass += ' error';
+            } else if (step.action === 'finish') {
+                resultClass += ' success';
+            }
+
+            stepCard.innerHTML = `
+                <div class="console-step-header">STEP ${step.step}</div>
+                <div class="console-thoughts">Thoughts: ${step.thoughts}</div>
+                <div class="console-action">
+                    <span class="console-action-label">Action:</span>
+                    <span>${step.action}</span>
+                </div>
+                <div class="${resultClass}">${step.result}</div>
+            `;
+            
+            consoleDiv.appendChild(stepCard);
+            consoleDiv.scrollTop = consoleDiv.scrollHeight;
+        }
+
+        function updateScreenshot() {
+            const viewer = document.getElementById('screenshot-viewer');
+            const cacheBuster = Date.now();
+            viewer.innerHTML = `<img id="screenshot-img" class="screenshot-img" src="/api/screenshot?t=${cacheBuster}" alt="Live Screen View" onerror="onScreenshotError()">`;
+        }
+
+        function onScreenshotError() {
+            const viewer = document.getElementById('screenshot-viewer');
+            viewer.innerHTML = `
+                <div class="screenshot-placeholder">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                        <polyline points="21 15 16 10 5 21"></polyline>
+                    </svg>
+                    <div>Image load error. Waiting for next refresh...</div>
+                </div>
+            `;
+        }
+
+        // Initialize state on page load
+        window.onload = loadInitialState;
+    </script>
+</body>
+</html>
